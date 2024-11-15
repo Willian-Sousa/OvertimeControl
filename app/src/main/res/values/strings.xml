@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Overtime Control</string>
+    <string name="overtime_control">Overtime Control</string>
+    <string name="earnings_per_hour">Enter the earnings per hour</string>
+    <string name="number_of_worked_days">Enter the number of worked days in this month</string>
+    <string name="number_of_worked_hour_per_day">Enter the number of worked hours per day</string>
+    <string name="normal_overtime_percentage">Enter the normal overtime percentage</string>
+    <string name="total_earnings">Total earnings in this month: %s</string>
+</resources>
