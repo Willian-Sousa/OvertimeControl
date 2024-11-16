@@ -29,10 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.overtimecontrol.ui.theme.OvertimeControlTheme
-import java.text.NumberFormat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import java.text.NumberFormat
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +62,7 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
     var earningsPerHourInput by remember { mutableStateOf("") }
     var numberOfDaysWorkedPerMonthInput by remember { mutableStateOf("") }
     var numberOfHoursWorkedPerDayInput by remember { mutableStateOf("") }
-    var numberOfOvertimeHoursWorkedInTheMonthInput by remember { mutableStateOf("") }
+    var numberOfOvertimeWorkedInTheMonthInput by remember { mutableStateOf("") }
     var normalOvertimePercentageInput by remember { mutableStateOf("") }
 
     /**
@@ -69,18 +70,45 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
      *  The Elvis operator "?:" return 0.0 if the value is null
      */
     val earningsPerHour = earningsPerHourInput.toDoubleOrNull() ?: 0.0
-    val numberOfDaysWorkedPerMonth = numberOfDaysWorkedPerMonthInput.toInt() ?: 0
-    val numberOfHoursWorkedPerDay = numberOfHoursWorkedPerDayInput.toDouble() ?: 0.0
-    val numberOfOvertimeHoursWorkedInTheMonth = numberOfOvertimeHoursWorkedInTheMonthInput.toDouble() ?: 0.0
+    val numberOfDaysWorkedPerMonth = numberOfDaysWorkedPerMonthInput.toDoubleOrNull() ?: 0.0
+    val numberOfHoursWorkedPerDay = numberOfHoursWorkedPerDayInput.toDoubleOrNull() ?: 0.0
+    val numberOfOvertimeWorkedInTheMonth = numberOfOvertimeWorkedInTheMonthInput.toDoubleOrNull() ?: 0.0
     val normalOvertimePercent = normalOvertimePercentageInput.toDoubleOrNull() ?: 0.0
 
     /**
-     * Store the returned value of the calculateTotalNormalOvertimeAdditional function
+     * Get the currency Instance to format some results
      */
-    val earningsPerHourWithOvertimeAdditional = calculateTotalNormalOvertimeAdditional(
+    val numberFormat = NumberFormat.getCurrencyInstance()
+
+
+    /**
+     * Store earnings of the month value returned
+     * by the calculateEarningsOfTheMonth function
+     */
+    val earningsOfTheMonth = calculateEarningsOfTheMonth(
+        earningsPerHour = earningsPerHour,
+        hoursPerDay = numberOfHoursWorkedPerDay,
+        workedDaysInTheMonth = numberOfDaysWorkedPerMonth)
+
+
+    /**
+     * Store the earnings per hour with overtime value returned by
+     *  the calculateTotalNormalOvertimeAdditional function
+     */
+    val earningsPerHourWithOvertimeAdditional = calculateNormalOvertimeAdditional(
         earningsPerHour = earningsPerHour,
         additionalPercentage = normalOvertimePercent
     )
+
+    /**
+     * Store the overtime earnings of the month
+     */
+    val overtimeEarningsOfTheMonth = earningsPerHourWithOvertimeAdditional * numberOfOvertimeWorkedInTheMonth
+
+    /**
+     * Total earnings of the month normal + overtime
+     */
+    val totalEarnings = earningsOfTheMonth + overtimeEarningsOfTheMonth
 
 
     Column(
@@ -94,11 +122,13 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
          */
         Title()
 
+        Spacer(modifier = Modifier.padding(8.dp))
+
         /**
-         * The earnings per hour TextField
+         * The earnings per hour
          */
         EditNumberField(
-            label = R.string.earnings_per_hour,
+            label = R.string.earnings_per_hour_input,
             leadingIcon = R.drawable.money,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -114,7 +144,7 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
          * The number of worked hours per day
          */
         EditNumberField(
-            label = R.string.number_of_worked_hour_per_day,
+            label = R.string.number_of_worked_hour_per_day_input,
             leadingIcon = R.drawable.hour,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -130,7 +160,7 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
          * The number of worked days in a month
          */
         EditNumberField(
-            label = R.string.number_of_worked_days,
+            label = R.string.number_of_worked_days_input,
             leadingIcon = R.drawable.day,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -143,28 +173,84 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(8.dp))
 
         /**
+         * The number of overtime in the current month
+         */
+        EditNumberField(
+            label = R.string.overtime,
+            leadingIcon = R.drawable.hour,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            value = numberOfOvertimeWorkedInTheMonthInput,
+            onValueChange = { numberOfOvertimeWorkedInTheMonthInput = it }
+        )
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        /**
          * The normal overtime percentage TextField
          */
         EditNumberField(
-            label = R.string.normal_overtime_percentage,
+            label = R.string.normal_overtime_percentage_input,
             leadingIcon = R.drawable.percent,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
             value = normalOvertimePercentageInput,
-            onValueChange = { normalOvertimePercentageInput = it}
+            onValueChange = { normalOvertimePercentageInput = it }
         )
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        /**
-         * The result of normal overtime
-         */
-        Text(
-            text = stringResource(id = R.string.total_earnings, earningsPerHourWithOvertimeAdditional),
-            style = MaterialTheme.typography.displaySmall
-        )
+
+    /**
+     * The results
+     */
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        ) {
+            // Worked days
+            Text(
+                text = stringResource(R.string.worked_days,
+                    numberOfDaysWorkedPerMonth)
+            )
+            //Number of worked hours per day
+            Text(
+                text = stringResource(R.string.worked_hours_per_day,
+                    numberOfHoursWorkedPerDay)
+            )
+            // Earnings per hour (normal)
+            Text(
+                text = stringResource(R.string.earnings_per_hour_normal,
+                    earningsPerHour)
+            )
+            //Earnings por hour (overtime)
+            Text(
+                text = stringResource(R.string.earnings_per_hour_overtime,
+                    earningsPerHourWithOvertimeAdditional)
+            )
+            //Total earnings of the month (normal)
+            Text(
+                text = stringResource(R.string.total_earnings_normal,
+                    earningsOfTheMonth)
+            )
+            // Total earnings of the month (overtime)
+            Text(
+                text = stringResource(R.string.total_earnings_overtime,
+                    overtimeEarningsOfTheMonth)
+            )
+            // Total earnings of the month normal + overtime
+            Text(
+                text = stringResource(R.string.total_earnings_in_the_month_normal_overtime,
+                    totalEarnings)
+            )
+        }
+
     }
 }
 /**
@@ -174,17 +260,17 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
  * @param hoursPerDay Number of hours worked in a day
  * @param workedDaysInTheMonth Number of days worked in the current month
  *
- * @return The earning per month
+ * @return The earning per month without overtime value
  */
 fun calculateEarningsOfTheMonth(
     earningsPerHour: Double,
     hoursPerDay: Double,
-    workedDaysInTheMonth: Int
-): String {
+    workedDaysInTheMonth: Double
+): Double {
     val earningsPerDay = earningsPerHour * hoursPerDay
-    val earningsPerMonth = earningsPerDay + workedDaysInTheMonth
+    val earningsPerMonth = earningsPerDay * workedDaysInTheMonth
 
-    return earningsPerMonth.toString()
+    return earningsPerMonth
 }
 
 /**
@@ -193,17 +279,17 @@ fun calculateEarningsOfTheMonth(
  * @param earningsPerHour Earnings per hour
  * @param additionalPercentage The percentage of the normal overtime value
  *
- * @return The overtime value per hour formated with the local currency
+ * @return The overtime value per hour
  */
-fun calculateTotalNormalOvertimeAdditional(
+fun calculateNormalOvertimeAdditional(
     earningsPerHour: Double,
-    additionalPercentage: Double): String
+    additionalPercentage: Double): Double
 {
     val additionalAmount = earningsPerHour * (additionalPercentage / 100)
     
     val result = earningsPerHour + additionalAmount
     
-    return NumberFormat.getCurrencyInstance().format(result)
+    return result
 }
 
 /**

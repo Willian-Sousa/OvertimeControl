@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">Overtime Control</string>
     <string name="overtime_control">Overtime Control</string>
-    <string name="earnings_per_hour">Enter the earnings per hour</string>
-    <string name="number_of_worked_days">Enter the number of worked days in this month</string>
-    <string name="number_of_worked_hour_per_day">Enter the number of worked hours per day</string>
-    <string name="normal_overtime_percentage">Enter the normal overtime percentage</string>
-    <string name="total_earnings">Total earnings in this month: %s</string>
+    <string name="earnings_per_hour_input">Earnings per hour</string>
+    <string name="number_of_worked_days_input">Days worked in this month</string>
+    <string name="number_of_worked_hour_per_day_input">Number of hours worked per day</string>
+    <string name="normal_overtime_percentage_input">Normal overtime percentage</string>
+    <string name="worked_days">Days worked: %s days</string>
+    <string name="overtime">Overtime in this month</string>
+    <string name="worked_hours_per_day">Hours worked per day: %sh</string>
+    <string name="earnings_per_hour_normal">Earnings per hour (normal) $%s</string>
+    <string name="earnings_per_hour_overtime">"Earnings per hour (overtime): $%s"</string>
+    <string name="total_earnings_normal">Total earnings in this month (normal): $%s</string>
+    <string name="total_earnings_overtime">"Total earnings in this month (overtime): $%s"</string>
+    <string name="total_earnings_in_the_month_normal_overtime">"Total earnings (normal + overtime): $%s"</string>
 </resources>

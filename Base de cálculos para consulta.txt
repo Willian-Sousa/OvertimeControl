@@ -2,7 +2,7 @@ Para calcular o salário juntamente com os acréscimos de hora extra
 
 1- entrar com a valor ganho por hora
 2- entrar com a quantidade de dias trabalhados
-3- entrar com as horas normais trabalhadas por dia
+3- entrar com quantas horas trabalha por dia
 4- entrar com quantidade de horas extras no mês
 5- entrar com a porcentagem ganha em adicional (ganho por hora extra)
 
@@ -12,8 +12,6 @@ Cálculos
 
 2- Horas extras normais = porcentagem de hora * ganho por hora
 
-3- quantidade de horas extras feitas no mês
+3- ganho no mês apenas das horas extras = qnt hr extra no mês * horas extras normais 
 
-4- ganho apenas das horas extras = qnt hr extra no mês * horas extras normais 
-
-5- ganho no mês com hora extra = horas extras normais + ganho normal no mês
+4- ganho no mês com hora extra = horas extras normais + ganho normal no mês
