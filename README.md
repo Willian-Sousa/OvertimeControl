@@ -7,6 +7,7 @@ An app to calculate your overtimer earnings in the current month
   3. Enter the worked days in the current month
   4. Enter the total overtime in the current month
   5. Enter the overtime percentage additional
+  6. Check the results
 
 # Download
 Go to [Releases](https://github.com/Willian-Sousa/OvertimeControl/releases) to download the apk. 
