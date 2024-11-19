@@ -17,7 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,11 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.overtimecontrol.ui.theme.OvertimeControlTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import java.text.NumberFormat
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun OvertimeControlApp(modifier: Modifier = Modifier) {
+fun OvertimeControlApp() {
 
     /**
      * Variables
@@ -74,11 +72,6 @@ fun OvertimeControlApp(modifier: Modifier = Modifier) {
     val numberOfHoursWorkedPerDay = numberOfHoursWorkedPerDayInput.toDoubleOrNull() ?: 0.0
     val numberOfOvertimeWorkedInTheMonth = numberOfOvertimeWorkedInTheMonthInput.toDoubleOrNull() ?: 0.0
     val normalOvertimePercent = normalOvertimePercentageInput.toDoubleOrNull() ?: 0.0
-
-    /**
-     * Get the currency Instance to format some results
-     */
-    val numberFormat = NumberFormat.getCurrencyInstance()
 
 
     /**
